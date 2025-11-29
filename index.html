@@ -155,20 +155,6 @@
     const feedback = document.getElementById('feedback');
     const progressBar = document.getElementById('progress');
 
-    // ⭐ 上传到 Google Sheet
-    function sendResultToSheet(name, score) {
-        fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: name,
-                score: score
-            })
-        }).catch(err => console.log("上传失败：", err));
-    }
-
     startButton.addEventListener("click", () => {
         studentName = nameInput.value.trim();
         if (studentName === "") {
@@ -195,12 +181,10 @@
         `;
 
         feedback.classList.add("hidden");
+
         submitButton.classList.remove("hidden");
-
-        nextButton.textContent =
-            currentQuestionIndex === quizData.length - 1 ? "完成" : "下一题";
-
         nextButton.classList.add("hidden");
+
         updateProgress();
     }
 
@@ -241,14 +225,24 @@
 
         if (currentQuestionIndex === quizData.length) {
 
+            // ⭐⭐⭐ 上传成绩到 Google Apps Script ⭐⭐⭐
+            fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: studentName,
+                    score: correctCount,
+                    timestamp: new Date().toLocaleString()
+                })
+            })
+            .then(res => res.text())
+            .then(result => console.log("上传成功：", result))
+            .catch(err => console.error("上传失败：", err));
+
             feedback.classList.add("hidden");
 
             form.innerHTML = `<p style="text-align:center;">🎉 恭喜 <strong>${studentName}</strong> ，你答对了 <span style="color:green;">${correctCount}</span> 题，继续加油！</p>`;
             nextButton.classList.add("hidden");
-
-            // ⭐⭐⭐ 完成 → 自动上传成绩 ⭐⭐⭐
-            sendResultToSheet(studentName, correctCount);
-
             return;
         }
 

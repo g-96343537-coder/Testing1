@@ -1,460 +1,314 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一年级生字填充练习</title>
-    <style>
-        body {
-            font-family: 'LiHei Pro', sans-serif;
-            background-color: #ffe0b2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>二年级数学选择题测验</title>
+<style>
+body {
+  font-family: "ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+  font-size: 18px; 
+  background: url('https://static.vecteezy.com/system/resources/previews/033/247/266/non_2x/abstract-background-pink-blue-pastel-color-free-vector.jpg') no-repeat center center fixed;
+  background-size: cover;
+  padding: 20px;
+  color: #000;
+  overflow-x: hidden;
+}
 
-        .quiz-container {
-            background-color: #ff9800;
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 600px;
-            color: #333;
-        }
+/* 主标题 */
+h1 {
+  font-size: 2.4rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
+/* 页码 */
+#q-index {
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+}
 
-        .question {
-            margin-bottom: 25px;
-            font-size: 22px;
-            line-height: 1.6;
-            font-weight: bold;
-        }
+/* 浮现层：覆盖题目和选项 */
+#quiz-container {
+  background: rgba(255,255,255,0.85);
+  padding: 24px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 20px rgba(255,255,255,0.2) inset;
+  backdrop-filter: blur(6px);
+  max-width: 900px;
+  margin: auto;
+  opacity: 80;
+  animation: fadeIn 0.8s forwards, floatUpDown 3s ease-in-out infinite alternate;
+}
 
-        .options label {
-            display: block;
-            background-color: #fff3e0;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 18px;
-            font-weight: normal;
-            border: 1px solid #ffcc80;
-        }
+/* 渐显动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-        .options label:hover { background-color: #ffecb3; }
+/* 轻微漂浮动画 */
+@keyframes floatUpDown {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-6px); }
+}
 
-        .options input[type="radio"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
+/* 题目 */
+#question {
+  font-size: 2rem;
+  margin-bottom: 25px;
+}
 
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #e65100;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            margin-top: 20px;
-        }
+/* 选项浮现框 */
+.opt {
+  font-size: 2.1rem;
+  padding: 16px 22px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  border: 3px solid #d0d0d0;
+  background: rgba(255,255,255,0.95);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.opt:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+.opt.correct { background: rgba(90, 220, 100,0.9); border-color: #56d56c; }
+.opt.wrong { background: rgba(255, 200, 200,0.9); border-color: #ff7b7b; }
 
-        .submit-btn:hover { background-color: #ff7043; }
-        .submit-btn:active { transform: scale(0.99); }
+/* 按钮样式 */
+#nextBtn, #finishBtn, #startBtn {
+  font-size: 1.6rem;
+  padding: 12px 26px;
+  background: #7dbbff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+#finishBtn { display:none; }
+#restart {
+  font-size: 1.3rem;
+  padding: 8px 18px;
+  margin-left: 12px;
+}
 
-        .feedback {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
+/* 分数和结果 */
+.score {
+  font-size: 1.6rem;
+  margin-top: 15px;
+}
+#result {
+  margin-top: 25px;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1a1a1a;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
 
-        .correct { color: green; }
-        .incorrect { color: red; }
-        .hidden { display: none; }
-
-        .progress-bar {
-            height: 10px;
-            background-color: #fbe9e7;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .progress {
-            height: 100%;
-            width: 0%;
-            background-color: #e65100;
-            border-radius: 5px;
-            transition: width 0.5s;
-        }
-    </style>
+/* 输入页 */
+#start-page {
+  text-align: center;
+  padding: 20px;
+}
+#start-page input {
+  font-size: 1.4rem;
+  padding: 10px;
+  width: 70%;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 2px solid #aaa;
+}
+</style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h1>一年级生字填充练习</h1>
-    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+<h1>二年级数学选择题测验</h1>
 
-    <!-- 姓名输入页 -->
-    <div id="name-page">
-        <div class="question">请输入你的名字：</div>
-        <input id="student-name" type="text" style="width:100%; padding:10px; font-size:18px; border-radius:8px; border:1px solid #ddd;">
-        <button class="submit-btn" id="start-button">开始练习</button>
-    </div>
+<!-- ========== 第 1 页：输入名字、班级 ========== -->
+<div id="start-page" style="display:block;">
+  <h2>请输入你的资料</h2>
+  <input id="studentName" placeholder="名字 Name">
+  <br>
+  <input id="studentClass" placeholder="班级 Class">
+  <br>
+  <button id="startBtn">开始测验</button>
+</div>
 
-    <!-- 题目页 -->
-    <form id="quiz-form" class="hidden"></form>
-
-    <div class="feedback hidden" id="feedback"></div>
-
-    <button class="submit-btn hidden" id="submit-button">提交答案</button>
-    <button class="submit-btn hidden" id="next-button">下一题</button>
+<!-- ========== 测验主体 ========== -->
+<div id="quiz-container" style="display:none;">
+  <div id="q-index">第 <span id="cur">1</span> / <span id="total">0</span> 题</div>
+  <div id="question"></div>
+  <div id="options"></div>
+  <div class="controls">
+    <div class="score" id="score">得分：0</div>
+    <button id="nextBtn" disabled>下一题</button>
+    <button id="finishBtn">完成测验</button>
+    <button id="restart">重做</button>
+  </div>
+  <div id="result"></div>
 </div>
 
 <script>
+// ====== 题库 ======
+const rawData = `
+1,数字 605 读作什么？ A. 六百五十 B. 六百零五 C. 六百五零 D. 六十五,B
+2,选出 “八百一十二” 的数字写法。 A. 812 B. 821 C. 802 D. 820,A
+3,在数目 492 中，数字 9 的数位是什么？ A. 个位 B. 十位 C. 百位 D. 千位,B
+4,在数目 735 中，数字 7 的数值是多少？ A. 7 B. 70 C. 700 D. 7000,C
+5,哪个数目的十位是 0？ A. 310 B. 508 C. 420 D. 600,A
+6,选出比 550 大，但比 600 小的数目。 A. 549 B. 589 C. 601 D. 650,B
+7,哪个数列是顺序排列的？ A. 210, 215, 220, 225 B. 300, 290, 280, 270 C. 105, 100, 110, 115 D. 450, 440, 460, 470,A
+8,完成数列：100, 200, ( ), 400, 500。 A. 250 B. 300 C. 350 D. 600,B
+9,426 的十位近似值是多少？ A. 420 B. 430 C. 400 D. 500,A
+10,875 的百位近似值是多少？ A. 800 B. 870 C. 880 D. 900,A
+11,324 + 45 = A. 360 B. 369 C. 379 D. 469,B
+12,208 + 560 = A. 708 B. 760 C. 768 D. 868,C
+13,哪项算式的答案最大？ A. 100 + 200 B. 150 + 100 C. 300 + 50 D. 200 + 250,D
+14,458 - 32 = A. 420 B. 426 C. 436 D. 480,C
+15,600 - 255 = A. 345 B. 355 C. 445 D. 455,A
+16,980 - 120 - 50 = A. 800 B. 810 C. 860 D. 910,B
+17,( ) - 150 = 300。括号里应填入什么数目？ A. 150 B. 250 C. 450 D. 500,C
+18,计算 125 + 75 - 50 的答案。 A. 100 B. 150 C. 200 D. 250,C
+19,6 X 4 = A. 10 B. 20 C. 24 D. 30,C
+20,哪个算式代表 “5 个 3”？ A. 5 + 3 B. 3 X 5 C. 5 - 3 D. 5 ÷3,B
+21,9 X 0 的答案是： A. 0 B. 1 C. 9 D. 90,A
+22,7 X 10 = A. 7 B. 17 C. 70 D. 700,C
+23,20 ÷ 5 A. 3 B. 4 C. 5 D. 6,B
+24,48 ÷ 8 = A. 5 B. 6 C. 7 D. 8,B
+25,任何数目除以 1，答案是： A. 0 B. 1 C. 原原本本的数目 D. 10,C
+26,妈妈买了 8 个苹果，平分给 2 个孩子，每个孩子得几个？ A. 2 B. 4 C. 6 D. 16,B
+27,停车场里有 120 辆红车和 85 辆蓝车。停车场里一共有多少辆车？ A. 195 B. 200 C. 205 D. 215,C
+28,叔叔养了 350 只鸡，卖掉了 120 只。他还剩下多少只鸡？ A. 200 B. 230 C. 470 D. 500,B
+29,一只猫有 4 条腿。5 只猫一共有多少条腿？ A. 9 B. 15 C. 20 D. 25,C
+30,老师有 40 颗糖果，每位学生分 10 颗，可以分给几位学生？ A. 3 B. 4 C. 10 D. 50,B
+`;
 
-    /* ⭐⭐⭐ 修改这里！换成你的 Google Apps Script 部署网址 ⭐⭐⭐ */
-    const API_URL = "https://script.google.com/macros/s/AKfycbx7sQUzOidb_lMx57RiS2SPfLy_hQaSoM4c9S0qNblLkRbSXvRkoGvcvGb_YHN2UZpMVw/exec";
+// ====== CSV 转换 ======
+const data = rawData.trim().split("\n").map(line=>{
+  const parts = line.split(",");
+  const answer = parts.pop().trim().toUpperCase();
+  const qid = parts.shift();
+  const full = parts.join(",").trim();
 
-    /* 题库 */
-    const quizData = [
-        { question: "今天是晴天，____上挂着一个大大的太阳。", options: ["地", "天", "口"], answer: "天" },
-        { question: "小明早上穿好衣服，准备去学____。", options: ["书", "校", "歌"], answer: "校" },
-        { question: "我们一起手____手，在草地上玩游戏。", options: ["走", "花", "牵"], answer: "牵" },
-        { question: "我____得好，老师给我一个五角星。", options: ["这", "画", "来"], answer: "画" },
-        { question: "春天来了，五颜六色的____开了。", options: ["花", "草", "枝"], answer: "花" },
-        { question: "小____在树枝上唱歌。", options: ["鸟", "朋", "姐"], answer: "鸟" },
-        { question: "晚上，我可以看到很多____星。", options: ["全", "字", "星"], answer: "星" },
-        { question: "我要认真____字，把字写得漂亮。", options: ["做", "写", "跑"], answer: "写" },
-        { question: "我们是好____友，天天一起玩。", options: ["妈", "朋", "爸"], answer: "朋" },
-        { question: "爸爸____着对我说：“你真棒！”", options: ["笑", "要", "全"], answer: "笑" }
-    ];
+  const optStart = full.indexOf("A.");
+  const qtext = full.slice(0, optStart).trim();
+  const optRaw = full.slice(optStart);
 
-    let currentQuestionIndex = 0;
-    let studentName = "";
-    let correctCount = 0;
+  const optParts = optRaw.split(/\s(?=[A-D]\.\s)/).map(s=>s.trim());
+  const opts = optParts.map(op => op.replace(/^[A-D]\.\s*/, ""));
+  while (opts.length < 4) opts.push("(缺失)");
 
-    const namePage = document.getElementById("name-page");
-    const startButton = document.getElementById("start-button");
-    const nameInput = document.getElementById("student-name");
+  return { q: qtext, options: opts, answer: {A:0,B:1,C:2,D:3}[answer] };
+});
 
-    const form = document.getElementById('quiz-form');
-    const submitButton = document.getElementById('submit-button');
-    const nextButton = document.getElementById('next-button');
-    const feedback = document.getElementById('feedback');
-    const progressBar = document.getElementById('progress');
+// ====== 学生资料 ======
+let studentName = "";
+let studentClass = "";
 
-    startButton.addEventListener("click", () => {
-        studentName = nameInput.value.trim();
-        if (studentName === "") {
-            alert("请输入名字！");
-            return;
-        }
-        namePage.classList.add("hidden");
-        form.classList.remove("hidden");
-        loadQuestion();
-    });
+// ====== 点击开始 ======
+document.getElementById("startBtn").addEventListener("click", ()=>{
+  studentName = document.getElementById("studentName").value.trim();
+  studentClass = document.getElementById("studentClass").value.trim();
 
-    function loadQuestion() {
-        const q = quizData[currentQuestionIndex];
+  if(!studentName || !studentClass){
+    alert("请输入名字和班级！");
+    return;
+  }
 
-        form.innerHTML = `
-            <div class="question">
-                ${currentQuestionIndex + 1}. ${q.question.replace('____', '（<span style="color:#e65100;">&nbsp;&nbsp;&nbsp;&nbsp;</span>）')}
-            </div>
-            <div class="options">
-                ${q.options.map(option => `
-                    <label><input type="radio" name="answer" value="${option}"> ${option}</label>
-                `).join('')}
-            </div>
-        `;
+  document.getElementById("start-page").style.display="none";
+  document.getElementById("quiz-container").style.display="block";
+  loadQuestion();
+});
 
-        feedback.classList.add("hidden");
-        submitButton.classList.remove("hidden");
-        nextButton.classList.add("hidden");
+// ====== 显示题目 ======
+let current=0, score=0, answered=false;
+document.getElementById('total').textContent = data.length;
 
-        updateProgress();
-    }
+function loadQuestion(){
+  answered=false;
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('finishBtn').style.display = 'none';
+  document.getElementById('result').textContent = '';
+  const q = data[current];
+  document.getElementById('question').textContent = q.q;
+  document.getElementById('cur').textContent = current+1;
 
-    function updateProgress() {
-        const percentage = (currentQuestionIndex / quizData.length) * 100;
-        progressBar.style.width = percentage + '%';
-    }
+  const optsDiv = document.getElementById('options');
+  optsDiv.innerHTML = '';
+  q.options.forEach((opt,i)=>{
+    const div = document.createElement('div');
+    div.className='opt';
+    div.textContent = opt;
+    div.addEventListener('click',()=>selectOption(div,i));
+    optsDiv.appendChild(div);
+  });
+}
 
-    function checkAnswer(event) {
-        event.preventDefault();
-        const selected = form.querySelector('input[name="answer"]:checked');
-        if (!selected) {
-            feedback.innerHTML = "请选择一个答案！";
-            feedback.classList.remove("hidden");
-            feedback.classList.remove("correct", "incorrect");
-            return;
-        }
+function selectOption(el,index){
+  if(answered) return;
+  answered=true;
+  const q = data[current];
+  const all = document.querySelectorAll('.opt');
+  all.forEach((d,i)=>{ if(i===q.answer) d.classList.add('correct'); });
+  if(index!==q.answer) el.classList.add('wrong');
+  else score++;
+  document.getElementById('score').textContent='得分：'+score;
 
-        const userAnswer = selected.value;
-        const correct = quizData[currentQuestionIndex].answer;
+  if(current === data.length-1){
+    document.getElementById('finishBtn').style.display='inline-block';
+    document.getElementById('nextBtn').style.display='none';
+  } else {
+    document.getElementById('nextBtn').disabled=false;
+  }
+}
 
-        if (userAnswer === correct) {
-            correctCount++;
-            feedback.innerHTML = `✅ 恭喜你，答对了！正确答案是：${correct}`;
-            feedback.classList.add("correct");
-        } else {
-            feedback.innerHTML = `❌ 答错了。正确答案是：<span style="color:green;">${correct}</span>`;
-            feedback.classList.add("incorrect");
-        }
+// ====== 下一题 ======
+document.getElementById('nextBtn').addEventListener('click',()=>{
+  current++;
+  loadQuestion();
+});
 
-        feedback.classList.remove("hidden");
-        submitButton.classList.add("hidden");
-        nextButton.classList.remove("hidden");
-    }
+// ====== 完成测验（整合 GAS 上传） ======
+document.getElementById('finishBtn').addEventListener('click',()=>{
 
-    function nextQuestion() {
-        currentQuestionIndex++;
+  // ====== 上传到 Google Apps Script ======
+  fetch("https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbxjoRpoO1taYtFJsg2w02RCzViD_ZEDTx9mhyT-b96YbXyXCcDQmqKT3b5Y_T8qEKJ3_Q/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: studentName,
+      class: studentClass,
+      score: score,
+      total: data.length,
+      timestamp: new Date().toLocaleString("zh-CN")
+    })
+  })
+  .catch(err => console.log("GAS Error:", err));
 
-        if (currentQuestionIndex === quizData.length) {
+  // ====== 显示结果 ======
+  document.getElementById('result').innerHTML =
+    `🎉 太棒啦，<strong>${studentName}</strong>（${studentClass}）！<br>
+     你完成了测验，总得分：${score} / ${data.length} 💪🌟`;
 
-            /* ⭐⭐⭐ 上传成绩到 Google Apps Script ⭐⭐⭐ */
-            fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: studentName,
-                    score: correctCount,
-                    timestamp: new Date().toLocaleString()
-                })
-            })
-            .then(res => res.text())
-            .then(result => console.log("上传成功：", result))
-            .catch(err => console.error("上传失败：", err));
+  document.getElementById('finishBtn').style.display='none';
+});
 
-            form.innerHTML = `<p style="text-align:center;">🎉 恭喜 <strong>${studentName}</strong> ，你答对了 <span style="color:green;">${correctCount}</span> 题！</p>`;
-            nextButton.classList.add("hidden");
-            return;
-        }
-
-        loadQuestion();
-    }
-
-    submitButton.addEventListener('click', checkAnswer);
-    nextButton.addEventListener('click', nextQuestion);
-
+// ====== 重做 ======
+document.getElementById('restart').addEventListener('click',()=>{
+  if(confirm('确定重做测验吗？')){
+    current=0;
+    score=0;
+    document.getElementById('score').textContent='得分：0';
+    document.getElementById('nextBtn').style.display='inline-block';
+    document.getElementById('nextBtn').disabled=true;
+    loadQuestion();
+  }
+});
 </script>
-
-</body>
-</html>
-        .options input[type="radio"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
-
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #e65100;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover { background-color: #ff7043; }
-        .submit-btn:active { transform: scale(0.99); }
-
-        .feedback {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .correct { color: green; }
-        .incorrect { color: red; }
-        .hidden { display: none; }
-
-        .progress-bar {
-            height: 10px;
-            background-color: #fbe9e7;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .progress {
-            height: 100%;
-            width: 0%;
-            background-color: #e65100;
-            border-radius: 5px;
-            transition: width 0.5s;
-        }
-    </style>
-</head>
-<body>
-
-<div class="quiz-container">
-    <h1>一年级生字填充练习</h1>
-    <div class="progress-bar"><div class="progress" id="progress"></div></div>
-
-    <!-- 第一页 -->
-    <div id="name-page">
-        <div class="question">请输入你的名字：</div>
-        <input id="student-name" type="text" style="width:100%; padding:10px; font-size:18px; border-radius:8px; border:1px solid #ddd;">
-        <button class="submit-btn" id="start-button">开始练习</button>
-    </div>
-
-    <!-- 题目页 -->
-    <form id="quiz-form" class="hidden"></form>
-
-    <div class="feedback" id="feedback"></div>
-    <button class="submit-btn hidden" id="submit-button">提交答案</button>
-    <button class="submit-btn hidden" id="next-button">下一题</button>
-</div>
-
-<script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzBWtCpsQXxZXMIV3K3GQmMZR29txiw8qbCCYcmucrrrj2x4SfAJw1zuvZJk84iXTSj5w/exec";
-
-    const quizData = [
-        { question: "今天是晴天，____上挂着一个大大的太阳。", options: ["地", "天", "口"], answer: "天" },
-        { question: "小明早上穿好衣服，准备去学____。", options: ["书", "校", "歌"], answer: "校" },
-        { question: "我们一起手____手，在草地上玩游戏。", options: ["走", "花", "牵"], answer: "牵" },
-        { question: "我____得好，老师给我一个五角星。", options: ["这", "画", "来"], answer: "画" },
-        { question: "春天来了，五颜六色的____开了。", options: ["花", "草", "枝"], answer: "花" },
-        { question: "小____在树枝上唱歌。", options: ["鸟", "朋", "姐"], answer: "鸟" },
-        { question: "晚上，我可以看到很多____星。", options: ["全", "字", "星"], answer: "星" },
-        { question: "我要认真____字，把字写得漂亮。", options: ["做", "写", "跑"], answer: "写" },
-        { question: "我们是好____友，天天一起玩。", options: ["妈", "朋", "爸"], answer: "朋" },
-        { question: "爸爸____着对我说：“你真棒！”", options: ["笑", "要", "全"], answer: "笑" }
-    ];
-
-    let currentQuestionIndex = 0;
-    let studentName = "";
-    let correctCount = 0;
-
-    const namePage = document.getElementById("name-page");
-    const startButton = document.getElementById("start-button");
-    const nameInput = document.getElementById("student-name");
-
-    const form = document.getElementById('quiz-form');
-    const submitButton = document.getElementById('submit-button');
-    const nextButton = document.getElementById('next-button');
-    const feedback = document.getElementById('feedback');
-    const progressBar = document.getElementById('progress');
-
-    startButton.addEventListener("click", () => {
-        studentName = nameInput.value.trim();
-        if (studentName === "") {
-            alert("请输入名字！");
-            return;
-        }
-        namePage.classList.add("hidden");
-        form.classList.remove("hidden");
-        loadQuestion();
-    });
-
-    function loadQuestion() {
-        const q = quizData[currentQuestionIndex];
-
-        form.innerHTML = `
-            <div class="question">
-                ${currentQuestionIndex + 1}. ${q.question.replace('____', '（<span style="color:#e65100;">&nbsp;&nbsp;&nbsp;&nbsp;</span>）')}
-            </div>
-            <div class="options">
-                ${q.options.map(option => `
-                    <label><input type="radio" name="answer" value="${option}"> ${option}</label>
-                `).join('')}
-            </div>
-        `;
-
-        feedback.classList.add("hidden");
-
-        submitButton.classList.remove("hidden");
-        nextButton.classList.add("hidden");
-
-        updateProgress();
-    }
-
-    function updateProgress() {
-        const percentage = (currentQuestionIndex / quizData.length) * 100;
-        progressBar.style.width = percentage + '%';
-    }
-
-    function checkAnswer(event) {
-        event.preventDefault();
-        const selected = form.querySelector('input[name="answer"]:checked');
-        if (!selected) {
-            feedback.innerHTML = "请选择一个答案！";
-            feedback.classList.remove("hidden");
-            feedback.classList.remove("correct", "incorrect");
-            return;
-        }
-
-        const userAnswer = selected.value;
-        const correct = quizData[currentQuestionIndex].answer;
-
-        if (userAnswer === correct) {
-            correctCount++;
-            feedback.innerHTML = `✅ 恭喜你，答对了！正确答案是：${correct}`;
-            feedback.classList.add("correct");
-        } else {
-            feedback.innerHTML = `❌ 答错了。正确答案是：<span style="color:green;">${correct}</span>`;
-            feedback.classList.add("incorrect");
-        }
-
-        feedback.classList.remove("hidden");
-        submitButton.classList.add("hidden");
-        nextButton.classList.remove("hidden");
-    }
-
-    function nextQuestion() {
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex === quizData.length) {
-
-            // ⭐⭐⭐ 上传成绩到 Google Apps Script ⭐⭐⭐
-            fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: studentName,
-                    score: correctCount,
-                    timestamp: new Date().toLocaleString()
-                })
-            })
-            .then(res => res.text())
-            .then(result => console.log("上传成功：", result))
-            .catch(err => console.error("上传失败：", err));
-
-            feedback.classList.add("hidden");
-
-            form.innerHTML = `<p style="text-align:center;">🎉 恭喜 <strong>${studentName}</strong> ，你答对了 <span style="color:green;">${correctCount}</span> 题，继续加油！</p>`;
-            nextButton.classList.add("hidden");
-            return;
-        }
-
-        loadQuestion();
-    }
-
-    submitButton.addEventListener('click', checkAnswer);
-    nextButton.addEventListener('click', nextQuestion);
-
-</script>
-
 </body>
 </html>
